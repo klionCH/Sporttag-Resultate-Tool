@@ -187,8 +187,6 @@ export default function ExportPopup({ onClose }) {
                 throw new Error(gradeResult.error || "Fehler bei der Notenberechnung");
             }
 
-            console.log(`✅ Noten aktualisiert für ${gradeResult.updated} Schüler`);
-
             // 2. Danach Rangliste holen
             const res = await fetch("/api/rankings/generate", {
                 method: "POST",

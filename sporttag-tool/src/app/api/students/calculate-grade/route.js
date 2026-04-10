@@ -34,7 +34,7 @@ export async function POST(req) {
             // Nur gültige Punkte summieren
             const totalPoints = studentResults
                 .filter(r => r.points !== null && r.skipped !== true)
-                .reduce((sum, r) => sum + r.points, 0);
+                .reduce((sum, r) => sum + Number(r.points), 0);
 
             // Nur vorhandene Noten berücksichtigen
             const validGrades = studentResults

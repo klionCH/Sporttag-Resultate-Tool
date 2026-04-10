@@ -201,7 +201,6 @@ export default function UploadPage() {
           if (!res.ok) throw new Error("Fehler beim Alters-Recalc");
           return res.json();
         })
-        .then(() => console.log("Alterskategorien erfolgreich neu berechnet"))
         .catch((err) => console.error("Fehler beim Alters-Update:", err.message));
     }
   };

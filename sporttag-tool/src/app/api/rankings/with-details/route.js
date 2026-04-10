@@ -40,7 +40,7 @@ export async function GET(req) {
         const punkteMap = new Map();
         for (const r of results) {
             if (!r.student_id || r.points == null || r.skipped === true) continue;
-            punkteMap.set(r.student_id, (punkteMap.get(r.student_id) || 0) + r.points);
+            punkteMap.set(r.student_id, (punkteMap.get(r.student_id) || 0) + Number(r.points));
         }
 
         // Punkte in DB zurückschreiben (optional, falls noch nicht gespeichert)

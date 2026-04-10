@@ -35,7 +35,6 @@ export default function Login() {
       // Speichert das Token im localStorage für das Menü
       localStorage.setItem("authToken", data.token);
 
-      console.log("✅ Login erfolgreich! Weiterleitung...");
       router.replace("/menu");
     } catch (error) {
       console.error("Login error:", error);

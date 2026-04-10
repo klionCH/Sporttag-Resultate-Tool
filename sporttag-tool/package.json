@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "hash-password": "node hash-password.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

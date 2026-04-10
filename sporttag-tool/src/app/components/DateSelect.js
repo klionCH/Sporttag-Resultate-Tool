@@ -37,8 +37,6 @@ useEffect(() => {
         const result = await response.json();
         if (!response.ok) {
             console.error("Fehler beim Speichern des Datums:", result.error);
-        } else {
-            console.log("Datum erfolgreich gespeichert:", result);
         }
     };
 
@@ -117,7 +115,6 @@ useEffect(() => {
             const result = await response.json().catch(() => ({}));
             console.error("Fehler beim Aktualisieren der Alterskategorien:", result?.error || "Unbekannter Fehler");
         } else {
-            console.log("Alterskategorien erfolgreich neu berechnet");
         }
     };
 
@@ -137,7 +134,6 @@ useEffect(() => {
             const result = await response.json().catch(() => ({}));
             console.error("Fehler beim Aktualisieren der Alterskategorien:", result?.error || "Unbekannter Fehler");
         } else {
-            console.log("Alterskategorien erfolgreich neu berechnet");
         }
     };
 
@@ -177,7 +173,6 @@ useEffect(() => {
     useEffect(() => {
         const fetchDate = async () => {
             const response = await fetch("/api/sportday/get-date", {credentials: "include",});
-            console.log("Response:", response);
             const result = await response.json();
             if (response.ok && result.date) {
                 const loadedDate = new Date(result.date);

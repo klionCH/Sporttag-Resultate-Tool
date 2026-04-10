@@ -157,20 +157,14 @@ export async function POST(req) {
 
             // Filter anwenden
             let filteredStudents = allStudents;
-            console.log("All students count:", allStudents.length);
-            console.log("Sample student data:", allStudents.length > 0 ? allStudents[0] : "No students");
 
             if (filters.gender !== "alle") {
-                console.log("Filtering by gender:", filters.gender);
                 filteredStudents = filteredStudents.filter(s => s.gender === filters.gender);
-                console.log("After gender filter count:", filteredStudents.length);
             }
 
 
             if (filters.altersgruppe !== "alle") {
-                console.log("Filtering by age category:", filters.altersgruppe);
                 filteredStudents = filteredStudents.filter(s => s.kategorie === filters.altersgruppe);
-                console.log("After age filter count:", filteredStudents.length);
             }
 
             if (filters.class_group !== "alle") {

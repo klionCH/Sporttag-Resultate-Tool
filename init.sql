@@ -122,7 +122,7 @@ CREATE TABLE public.results (
     best_result double precision,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now(),
-    points bigint,
+    points int,
     skipped boolean DEFAULT false,
     grade real
 );
@@ -210,7 +210,7 @@ CREATE TABLE public.students (
     assistant_bool boolean DEFAULT false,
     present_bool boolean DEFAULT true,
     created_at timestamp with time zone DEFAULT now(),
-    total_points bigint,
+    total_points int,
     age_category public.age_category,
     grade real,
     gender public.gender
@@ -1303,85 +1303,6 @@ COPY public.profiles (id, role, username, password) FROM stdin;
 78404f03-c2ac-4653-8e72-2d5383635a9f	assistant	helferpass	$2b$10$aVhXNVODz2YjnJ31QdN3FuwLazWb9hT2SZPBFmnJYay7RdPD3y0aW
 \.
 
-
---
--- Data for Name: results; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.results (id, student_id, sport, "group", attempt_results, heights, scores, best_result, created_at, updated_at, points, skipped, grade) FROM stdin;
-1359	7e44d10c-05be-48ad-8118-bffaf7cf2b98	80m	1aW-weiblich	\N	\N	["11.54"]	11.54	2025-04-13 11:32:12.673422	2025-04-13 11:32:12.673422	51	f	6
-1360	f756ff92-6488-4ca4-b6e4-9f87a7cd3c60	80m	1aW-weiblich	\N	\N	["12.34"]	12.34	2025-04-13 11:32:13.677944	2025-04-13 11:32:13.677944	37	f	5
-1361	1c7a8d63-1eb8-419a-b885-632f5c1cdeea	80m	1aW-weiblich	\N	\N	["12.44"]	12.44	2025-04-13 11:32:14.847596	2025-04-13 11:32:14.847596	36	f	4.5
-1362	d5714c36-9fd5-4315-bf6f-191327848c55	80m	1aW-weiblich	\N	\N	["13.09"]	13.09	2025-04-13 11:32:15.611793	2025-04-13 11:32:15.611793	26	f	4
-1363	1a3241b4-2c1b-43f6-861e-00239602f81f	80m	1aW-weiblich	\N	\N	["13.12"]	13.12	2025-04-13 11:32:16.796855	2025-04-13 11:32:16.796855	26	f	4
-1369	7e44d10c-05be-48ad-8118-bffaf7cf2b98	huerdenlauf	1aW-weiblich	\N	\N	["14.34"]	14.34	2025-04-13 11:35:27.662435	2025-04-13 11:35:27.662435	14	f	2.5
-1370	f756ff92-6488-4ca4-b6e4-9f87a7cd3c60	huerdenlauf	1aW-weiblich	\N	\N	["15.12"]	15.12	2025-04-13 11:35:28.174896	2025-04-13 11:35:28.174896	5	f	1
-1371	1c7a8d63-1eb8-419a-b885-632f5c1cdeea	huerdenlauf	1aW-weiblich	\N	\N	["14.02"]	14.02	2025-04-13 11:35:28.674885	2025-04-13 11:35:28.674885	19	f	3
-1372	d5714c36-9fd5-4315-bf6f-191327848c55	huerdenlauf	1aW-weiblich	\N	\N	["15.67"]	15.67	2025-04-13 11:35:29.178401	2025-04-13 11:35:29.178401	0	f	1
-1373	1a3241b4-2c1b-43f6-861e-00239602f81f	huerdenlauf	1aW-weiblich	\N	\N	["16.34"]	16.34	2025-04-13 11:35:29.694525	2025-04-13 11:35:29.694525	0	f	1
-1420	54953a05-727b-4427-8b7c-3a18d4905540	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:23.41198	2025-04-17 11:52:23.41198	\N	f	\N
-1421	57c9e13d-e3c5-4785-92f9-3f7d327f881b	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:23.912095	2025-04-17 11:52:23.912095	\N	f	\N
-1422	0309cb7f-ff7b-4d83-99ea-24f0c60c1a9e	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:24.402127	2025-04-17 11:52:24.402127	\N	f	\N
-1423	6469757c-6a9d-4aec-93ed-961a6c99528e	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:25.110916	2025-04-17 11:52:25.110916	\N	f	\N
-1424	41c1b740-c82a-42b1-855c-b6c6513e604e	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:25.399568	2025-04-17 11:52:25.399568	\N	f	\N
-1379	7e44d10c-05be-48ad-8118-bffaf7cf2b98	speer	1aW-weiblich	\N	\N	["10.67"]	10.67	2025-04-13 11:38:30.902185	2025-04-13 11:38:30.902185	27	f	4
-1380	f756ff92-6488-4ca4-b6e4-9f87a7cd3c60	speer	1aW-weiblich	\N	\N	["11.02"]	11.02	2025-04-13 11:38:31.613363	2025-04-13 11:38:31.613363	28	f	4
-1381	1c7a8d63-1eb8-419a-b885-632f5c1cdeea	speer	1aW-weiblich	\N	\N	["9.55"]	9.55	2025-04-13 11:38:32.319611	2025-04-13 11:38:32.319611	23	f	3.5
-1382	d5714c36-9fd5-4315-bf6f-191327848c55	speer	1aW-weiblich	\N	\N	["13.67"]	13.67	2025-04-13 11:38:33.019711	2025-04-13 11:38:33.019711	36	f	5
-1383	1a3241b4-2c1b-43f6-861e-00239602f81f	speer	1aW-weiblich	\N	\N	["9.54"]	9.54	2025-04-13 11:38:33.537263	2025-04-13 11:38:33.537263	23	f	3.5
-1392	7516b442-0e5f-4634-ba72-7886372efeea	huerdenlauf	1bW-weiblich	\N	\N	["13.99"]	13.99	2025-04-13 15:29:01.598078	2025-04-13 15:29:01.598078	19	f	3
-1393	749aa39a-dfb2-48b0-b774-8a0eac9fc3cb	huerdenlauf	1bW-weiblich	\N	\N	["13.88"]	13.88	2025-04-13 15:29:02.127209	2025-04-13 15:29:02.127209	20	f	3
-1394	ac9ac1b6-a0f7-4c6a-94e3-e034860341d0	huerdenlauf	1bW-weiblich	\N	\N	["16.21"]	16.21	2025-04-13 15:29:03.058095	2025-04-13 15:29:03.058095	0	f	1
-1395	34ec4f5e-0cbf-49fe-b352-dc44cc39abd4	huerdenlauf	1bW-weiblich	\N	\N	["13.62"]	13.62	2025-04-13 15:29:03.786204	2025-04-13 15:29:03.786204	24	f	3.5
-1396	1e53c02e-0cda-4cde-b023-ca176c7fa981	huerdenlauf	1bW-weiblich	\N	\N	["15.55"]	15.55	2025-04-13 15:29:04.50134	2025-04-13 15:29:04.50134	0	f	1
-1397	0a787985-1075-419a-80d9-510515a66a70	huerdenlauf	1bW-weiblich	\N	\N	["14.21"]	14.21	2025-04-13 15:29:05.221764	2025-04-13 15:29:05.221764	16	f	3
-1398	405022fb-7888-4b95-8d06-1427f38f7cc9	huerdenlauf	1bW-weiblich	\N	\N	["15.56"]	15.56	2025-04-13 15:29:05.940574	2025-04-13 15:29:05.940574	0	f	1
-1399	f902beb6-ccb9-44b9-9ada-d6a4f3a12377	huerdenlauf	1bW-weiblich	\N	\N	["13.44"]	13.44	2025-04-13 15:29:06.465409	2025-04-13 15:29:06.465409	27	f	4
-1407	f902beb6-ccb9-44b9-9ada-d6a4f3a12377	kugel	1bW-weiblich	\N	\N	["7.44"]	7.44	2025-04-13 15:31:05.800512	2025-04-13 15:31:05.800512	45	f	5.5
-1408	7516b442-0e5f-4634-ba72-7886372efeea	speer	1bW-weiblich	\N	\N	["12.99"]	12.99	2025-04-13 15:32:18.136055	2025-04-13 15:32:18.136055	34	f	4.5
-1409	749aa39a-dfb2-48b0-b774-8a0eac9fc3cb	speer	1bW-weiblich	\N	\N	["13.69"]	13.69	2025-04-13 15:32:19.324603	2025-04-13 15:32:19.324603	36	f	5
-1410	ac9ac1b6-a0f7-4c6a-94e3-e034860341d0	speer	1bW-weiblich	\N	\N	["11.00"]	11	2025-04-13 15:32:20.518811	2025-04-13 15:32:20.518811	28	f	4
-1411	34ec4f5e-0cbf-49fe-b352-dc44cc39abd4	speer	1bW-weiblich	\N	\N	["14.21"]	14.21	2025-04-13 15:32:21.716839	2025-04-13 15:32:21.716839	38	f	5
-1412	1e53c02e-0cda-4cde-b023-ca176c7fa981	speer	1bW-weiblich	\N	\N	["10.18"]	10.18	2025-04-13 15:32:22.457087	2025-04-13 15:32:22.457087	25	f	3.5
-1413	0a787985-1075-419a-80d9-510515a66a70	speer	1bW-weiblich	\N	\N	["12.23"]	12.23	2025-04-13 15:32:23.228342	2025-04-13 15:32:23.228342	32	f	4.5
-1414	405022fb-7888-4b95-8d06-1427f38f7cc9	speer	1bW-weiblich	\N	\N	[""]	\N	2025-04-13 15:32:23.706161	2025-04-13 15:32:23.706161	\N	t	\N
-1415	f902beb6-ccb9-44b9-9ada-d6a4f3a12377	speer	1bW-weiblich	\N	\N	["13.87"]	13.87	2025-04-13 15:32:24.463352	2025-04-13 15:32:24.463352	37	f	5
-1416	674961bd-3dcf-41ac-a39b-1ab947e77f76	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:20.259689	2025-04-17 11:52:20.259689	\N	f	\N
-1417	29d4b5e3-5629-4f38-84ea-8cdf9d0fbc62	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:20.766284	2025-04-17 11:52:20.766284	\N	f	\N
-1418	2a51e8c6-0f2f-40a0-b85f-6cfaa69455cb	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:21.467697	2025-04-17 11:52:21.467697	\N	f	\N
-1419	0689174e-5e0f-4f83-91b2-aafdf3003e05	huerdenlauf	1aW-maennlich	\N	\N	["12.5"]	12.5	2025-04-17 11:52:22.688759	2025-04-17 11:52:22.688759	75	f	6
-1425	78e47f57-ee95-43ab-8562-5623e733b791	huerdenlauf	1aW-maennlich	\N	\N	["11.5"]	11.5	2025-04-17 11:52:26.598916	2025-04-17 11:52:26.598916	89	f	6
-1426	8694a1d0-ac66-40c5-afdd-8caf74cc538a	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:27.131102	2025-04-17 11:52:27.131102	\N	f	\N
-1427	6066d367-2ce5-4648-ac9b-99725d57bb3a	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:27.624152	2025-04-17 11:52:27.624152	\N	f	\N
-1428	ae648293-4bda-41ac-abce-3ceddd6cc349	huerdenlauf	1aW-maennlich	\N	\N	[""]	0	2025-04-17 11:52:27.916585	2025-04-17 11:52:27.916585	\N	f	\N
-1385	749aa39a-dfb2-48b0-b774-8a0eac9fc3cb	80m	1bW-weiblich	\N	\N	["11.45"]	11.45	2025-04-13 15:26:47.115814	2025-04-13 15:26:47.115814	53	f	6
-1386	ac9ac1b6-a0f7-4c6a-94e3-e034860341d0	80m	1bW-weiblich	\N	\N	["13.53"]	13.53	2025-04-13 15:26:48.316286	2025-04-13 15:26:48.316286	20	f	3
-1387	34ec4f5e-0cbf-49fe-b352-dc44cc39abd4	80m	1bW-weiblich	\N	\N	["10.91"]	10.91	2025-04-13 15:26:49.294342	2025-04-13 15:26:49.294342	63	f	6
-1388	1e53c02e-0cda-4cde-b023-ca176c7fa981	80m	1bW-weiblich	\N	\N	["12.11"]	12.11	2025-04-13 15:26:50.265972	2025-04-13 15:26:50.265972	41	f	5
-1377	d5714c36-9fd5-4315-bf6f-191327848c55	kugel	1aW-weiblich	\N	\N	["6.12"]	6.12	2025-04-13 11:37:12.398565	2025-04-13 11:37:12.398565	25	f	3.5
-1364	7e44d10c-05be-48ad-8118-bffaf7cf2b98	hoch	1aW-weiblich	[true, false, true, false, true, false]	["1.20", "1.25", "1.25", "1.30", "1.30", "1.35"]	\N	1.3	2025-04-13 11:34:44.64676	2025-04-13 11:34:44.64676	47	f	6
-1365	f756ff92-6488-4ca4-b6e4-9f87a7cd3c60	hoch	1aW-weiblich	[true, false, true, false, false, true]	["1.10", "1.15", "1.20", "1.25", "1.25", "1.25"]	\N	1.25	2025-04-13 11:34:45.172409	2025-04-13 11:34:45.172409	41	f	5.5
-1366	1c7a8d63-1eb8-419a-b885-632f5c1cdeea	hoch	1aW-weiblich	[true, false, true, false, true, false]	["1.10", "1.15", "1.15", "1.20", "1.20", "1.25"]	\N	1.2	2025-04-13 11:34:45.891788	2025-04-13 11:34:45.891788	35	f	4.5
-1389	0a787985-1075-419a-80d9-510515a66a70	80m	1bW-weiblich	\N	\N	["10.88"]	10.88	2025-04-13 15:26:51.03893	2025-04-13 15:26:51.03893	64	f	6
-1390	405022fb-7888-4b95-8d06-1427f38f7cc9	80m	1bW-weiblich	\N	\N	["13.01"]	13.01	2025-04-13 15:26:51.60259	2025-04-13 15:26:51.60259	27	f	4
-1367	d5714c36-9fd5-4315-bf6f-191327848c55	hoch	1aW-weiblich	[true, false, false, false, null, null]	["1.00", "1.05", "1.05", "1.05", "", ""]	\N	1	2025-04-13 11:34:46.396529	2025-04-13 11:34:46.396529	8	f	2
-1368	1a3241b4-2c1b-43f6-861e-00239602f81f	hoch	1aW-weiblich	[true, true, false, false, false, null]	["1.00", "1.05", "1.10", "1.10", "1.10", ""]	\N	1.05	2025-04-13 11:34:46.930409	2025-04-13 11:34:46.930409	15	f	2.5
-1378	1a3241b4-2c1b-43f6-861e-00239602f81f	kugel	1aW-weiblich	\N	\N	["5.67"]	5.67	2025-04-13 11:37:13.519007	2025-04-13 11:37:13.519007	18	f	3
-1374	7e44d10c-05be-48ad-8118-bffaf7cf2b98	kugel	1aW-weiblich	\N	\N	["6.32"]	6.32	2025-04-13 11:37:09.626134	2025-04-13 11:37:09.626134	28	f	4
-1391	f902beb6-ccb9-44b9-9ada-d6a4f3a12377	80m	1bW-weiblich	\N	\N	["11.67"]	11.67	2025-04-13 15:26:52.359454	2025-04-13 15:26:52.359454	49	f	6
-1400	7516b442-0e5f-4634-ba72-7886372efeea	kugel	1bW-weiblich	\N	\N	["8.01"]	8.01	2025-04-13 15:31:01.785212	2025-04-13 15:31:01.785212	53	f	6
-1375	f756ff92-6488-4ca4-b6e4-9f87a7cd3c60	kugel	1aW-weiblich	\N	\N	["7.11"]	7.11	2025-04-13 11:37:10.562289	2025-04-13 11:37:10.562289	40	f	5
-1401	749aa39a-dfb2-48b0-b774-8a0eac9fc3cb	kugel	1bW-weiblich	\N	\N	["6.77"]	6.77	2025-04-13 15:31:02.513554	2025-04-13 15:31:02.513554	35	f	4.5
-1376	1c7a8d63-1eb8-419a-b885-632f5c1cdeea	kugel	1aW-weiblich	\N	\N	["5.34"]	\N	2025-04-13 11:37:11.68034	2025-04-13 11:37:11.68034	\N	t	\N
-1402	ac9ac1b6-a0f7-4c6a-94e3-e034860341d0	kugel	1bW-weiblich	\N	\N	[""]	\N	2025-04-13 15:31:02.991735	2025-04-13 15:31:02.991735	\N	t	\N
-1384	7516b442-0e5f-4634-ba72-7886372efeea	80m	1bW-weiblich	\N	\N	["10.79"]	10.79	2025-04-13 15:26:45.697604	2025-04-13 15:26:45.697604	65	f	6
-1403	34ec4f5e-0cbf-49fe-b352-dc44cc39abd4	kugel	1bW-weiblich	\N	\N	["7.68"]	7.68	2025-04-13 15:31:03.51497	2025-04-13 15:31:03.51497	48	f	6
-1404	1e53c02e-0cda-4cde-b023-ca176c7fa981	kugel	1bW-weiblich	\N	\N	["5.67"]	5.67	2025-04-13 15:31:04.03685	2025-04-13 15:31:04.03685	18	f	3
-1405	0a787985-1075-419a-80d9-510515a66a70	kugel	1bW-weiblich	\N	\N	["7.04"]	7.04	2025-04-13 15:31:04.763578	2025-04-13 15:31:04.763578	39	f	5
-1406	405022fb-7888-4b95-8d06-1427f38f7cc9	kugel	1bW-weiblich	\N	\N	["5.23"]	5.23	2025-04-13 15:31:05.270897	2025-04-13 15:31:05.270897	10	f	2
-\.
-
-
 --
 -- Data for Name: sportdays; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1396,76 +1317,12 @@ COPY public.sportdays (id, created_at, date) FROM stdin;
 --
 
 COPY public.sports (id, name, code, measure, mesure_unit_short, attempts, check_fail, time_measure, svg_url) FROM stdin;
-fbf1f2fa-3c4f-480d-b67d-e98a015c8543	80m	80m	sekunden	sek	1	f	t	https://qcxsrkpddxkljwaiqyux.supabase.co/storage/v1/object/sign/icons/80m.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy84MG0uc3ZnIiwiaWF0IjoxNzQ0MDE5ODI4LCJleHAiOjIwMjc4NDM4Mjh9.e_bLA6_pXRmrwRV9qwGlYmS7hlcNE_pmEM3MQL14sec
-eded7669-870b-4a5b-86a8-5172d4471f7d	Hochsprung	hoch	meter	m	6	t	f	https://qcxsrkpddxkljwaiqyux.supabase.co/storage/v1/object/sign/icons/hoch.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy9ob2NoLnN2ZyIsImlhdCI6MTc0NDAxOTg0NywiZXhwIjoyMDI3ODQzODQ3fQ.C2TLzJLbBZD-WzOc6CmcRxz0O6xHW-ZVxTtB7aR7UYg
-36eb0b0d-f7e9-409a-a0d9-1626b77cbf94	Hürdenlauf	huerdenlauf	sekunden	sek	1	f	t	https://qcxsrkpddxkljwaiqyux.supabase.co/storage/v1/object/sign/icons/huerdenlauf.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy9odWVyZGVubGF1Zi5zdmciLCJpYXQiOjE3NDQwMTk4NjAsImV4cCI6MjAyNzg0Mzg2MH0.v3jAe2IeOZS429JmQ6YzMpWBHJfuoodi0dVgf63IIfg
-6cf2807c-c25a-4901-abb6-8ce2f2f01425	Speerwurf	speer	meter	m	1	f	f	https://qcxsrkpddxkljwaiqyux.supabase.co/storage/v1/object/sign/icons/speer.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy9zcGVlci5zdmciLCJpYXQiOjE3NDQwMTk4ODgsImV4cCI6MTc2NzM0Nzg4OH0.wlKrmsQ7_gWXFKOU0J3kYTh-I2qSErlED1mxFtp28DQ
-112fcd9d-e1f2-4222-8124-fe81ea6b8f4f	Kugelstossen	kugel	meter	m	1	f	f	https://qcxsrkpddxkljwaiqyux.supabase.co/storage/v1/object/sign/icons/kugel.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy9rdWdlbC5zdmciLCJpYXQiOjE3NDQwMTk4NzQsImV4cCI6MjAyNzg0Mzg3NH0.MkZZntkW_pn1zJrU7sYnbwxuLf5E3AfyzeILv52Llts
+fbf1f2fa-3c4f-480d-b67d-e98a015c8543	80m	80m	sekunden	sek	1	f	t	/icons/80m.svg
+eded7669-870b-4a5b-86a8-5172d4471f7d	Hochsprung	hoch	meter	m	6	t	f	/icons/hoch.svg
+36eb0b0d-f7e9-409a-a0d9-1626b77cbf94	Hürdenlauf	huerdenlauf	sekunden	sek	1	f	t	/icons/huerdenlauf.svg
+6cf2807c-c25a-4901-abb6-8ce2f2f01425	Speerwurf	speer	meter	m	1	f	f	/icons/speer.svg
+112fcd9d-e1f2-4222-8124-fe81ea6b8f4f	Kugelstossen	kugel	meter	m	1	f	f	/icons/kugel.svg
 \.
-
-
---
--- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.students (id, name, surname, date_of_birth, class_group, assistant_bool, present_bool, created_at, total_points, age_category, grade, gender) FROM stdin;
-320e27d6-2a36-422b-a12b-10832a23b9d6	Fran	Buterin	2009-06-17	1bW	f	t	2025-04-13 11:29:31.552717+00	0	16-17	1	maennlich
-0751fb91-1ad2-466f-99dd-50fb4d4b2383	Jay	Alleyne	2009-08-09	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-674961bd-3dcf-41ac-a39b-1ab947e77f76	Suheib	Shetewi	2008-08-04	1aW	f	t	2025-04-13 11:29:41.031149+00	0	16-17	1	maennlich
-29d4b5e3-5629-4f38-84ea-8cdf9d0fbc62	Ben	Schueller	2010-01-19	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-574f31f4-c193-4004-8843-657572558b1e	Heiko	Ho	2006-04-16	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-0309cb7f-ff7b-4d83-99ea-24f0c60c1a9e	Nevio	Zogg	2009-08-19	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-75847818-0f12-4e28-9d1d-6f500aa4ba68	Jann	Reutegger	2006-09-04	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-c825d246-9422-4e78-9866-7fb759f2376c	Yohann	Riond	2004-06-30	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-fa9084e8-bc3b-4866-9f8f-8159fad2b7fb	Nils	Engehausen	2009-08-23	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-2a51e8c6-0f2f-40a0-b85f-6cfaa69455cb	Mattia	Parpan	2010-02-02	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-291f62e6-ba7b-491f-964b-4daf16e5b630	Dominik	Hämmerle	2006-09-29	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-34fcda70-6375-4786-9a9c-efd893bf3094	Leon	Graul	2010-01-04	1bW	t	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-4bff1a82-5a5a-4851-b8b9-d4bcf1d7a312	Kenz	Abdelkebir	2006-07-31	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-cc2e3fe2-de86-4295-bfc9-d054305d1941	Louis	Zeller	2009-11-08	1bW	f	f	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-533147f0-9a63-40c9-a753-1cf1095d4ca4	Marco	Auer	2006-11-22	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-442c8dd9-a36e-45af-8e45-77379dc14b93	Vincent	Stucki	2006-03-28	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-5d932dd8-c9da-4441-8469-b6e7cbb86610	Sven	Lübcke	2006-01-08	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-41c38324-c7a6-4fc7-8fc7-74eeb4f3d0d7	Devin	Mugglin	2006-08-08	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-0879547f-b272-4666-b5b2-426465e32bcc	Gian	Oechslin	2002-11-26	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-697e32ff-fb85-4363-91bc-0be1d5d6cc9a	Giulian	Mazzeo	2007-01-15	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-57c9e13d-e3c5-4785-92f9-3f7d327f881b	Rémy	Wäger	2009-05-25	1aW	f	t	2025-04-13 11:29:41.031149+00	0	16-17	1	maennlich
-34ec4f5e-0cbf-49fe-b352-dc44cc39abd4	Elisa	Facchinetti	2009-12-14	1bW	f	t	2025-04-13 11:29:31.552717+00	173	-15	5.25	weiblich
-520157e4-3fde-4a4d-8101-149661119a8e	Leo	Wäspi	2010-03-17	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-1e53c02e-0cda-4cde-b023-ca176c7fa981	Rafeef	Qassem	2008-10-19	1bW	f	t	2025-04-13 11:29:31.552717+00	84	16-17	3.25	weiblich
-54953a05-727b-4427-8b7c-3a18d4905540	Lean	Mérillat	2009-08-08	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-b653573a-85e8-405b-bf89-b4ab7a06c038	Laurin	Hubschmid	2006-04-03	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-dfef5928-afec-48a4-8700-57e79c27e695	Lionel	Fritsche	2009-09-12	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-f448c66e-78a7-4a78-99b1-f1335cfbe510	Timo	Weber	2006-11-14	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-b7e1b0b3-c7f7-4139-9f61-9f1bb585ba8a	Linus	Bruggisser	2009-08-12	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-1322871d-4398-494d-884d-d3d41aa105b0	Nils	Kaufmann	2005-06-28	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-806a62f3-0f5a-44a4-89e5-81065fb26f6c	Angelos	Ntellis	2008-06-15	1bW	f	t	2025-04-13 11:29:31.552717+00	0	16-17	1	maennlich
-0a787985-1075-419a-80d9-510515a66a70	Büsra	Can	2009-06-28	1bW	f	t	2025-04-13 11:29:31.552717+00	151	-15	4.75	weiblich
-1ce1ed99-1f2d-414c-a3e9-e036e6aeb6e2	Tihan	Morrol	2005-10-01	3I	f	t	2025-04-16 12:42:06.183597+00	0	18+	1	maennlich
-7d51e1af-6218-4088-b75b-4cb60187babe	Leon	Lerch	2009-05-21	1bW	f	t	2025-04-13 11:29:31.552717+00	0	16-17	1	maennlich
-405022fb-7888-4b95-8d06-1427f38f7cc9	Anna	Dürsteler	2009-11-16	1bW	f	t	2025-04-13 11:29:31.552717+00	37	-15	2.25	weiblich
-f902beb6-ccb9-44b9-9ada-d6a4f3a12377	Mei	Schindler	2009-07-13	1bW	f	t	2025-04-13 11:29:31.552717+00	158	-15	5.25	weiblich
-0689174e-5e0f-4f83-91b2-aafdf3003e05	Darian	Egli	2009-03-12	1aW	f	t	2025-04-13 11:29:41.031149+00	75	16-17	6	maennlich
-0341c359-51f3-48bf-b552-62b3f8720525	Noé	Marquard	2008-09-17	1bW	f	t	2025-04-13 11:29:31.552717+00	0	16-17	1	maennlich
-89f91016-7850-40c3-a953-bd9a53431f0e	Mahid	Mujahid	2008-05-06	1bW	f	t	2025-04-13 11:29:31.552717+00	0	16-17	1	maennlich
-a1e7d0c6-422c-43dd-9f33-91bcd9cfc0fa	Levin	Schmitt	2009-11-06	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-ae648293-4bda-41ac-abce-3ceddd6cc349	Lisandro	Lang	2009-09-30	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-6469757c-6a9d-4aec-93ed-961a6c99528e	Ruben	Schober	2009-12-30	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-78e47f57-ee95-43ab-8562-5623e733b791	Murilo	"Santos D'Elly"	2008-08-12	1aW	f	t	2025-04-13 11:29:41.031149+00	89	16-17	6	maennlich
-6066d367-2ce5-4648-ac9b-99725d57bb3a	Fabio	Schürch	2009-10-17	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-8694a1d0-ac66-40c5-afdd-8caf74cc538a	Matteo	Hofmänner	2009-12-10	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-41c1b740-c82a-42b1-855c-b6c6513e604e	Arvid	Reinert	2009-09-06	1aW	f	t	2025-04-13 11:29:41.031149+00	0	-15	1	maennlich
-90c619ac-ead6-4d7d-899d-d26fae2deb77	Aaro	Meisser	2009-10-06	1bW	f	t	2025-04-13 11:29:31.552717+00	0	-15	1	maennlich
-7e44d10c-05be-48ad-8118-bffaf7cf2b98	Soraya	Schiller	2009-11-03	1aW	f	t	2025-04-13 11:29:41.031149+00	167	-15	4.5	weiblich
-f756ff92-6488-4ca4-b6e4-9f87a7cd3c60	Joëlle	Schiltknecht	2010-04-24	1aW	f	t	2025-04-13 11:29:41.031149+00	151	-15	4	weiblich
-1c7a8d63-1eb8-419a-b885-632f5c1cdeea	Alenka	Brüngger	2008-09-09	1aW	f	t	2025-04-13 11:29:41.031149+00	113	16-17	4	weiblich
-d5714c36-9fd5-4315-bf6f-191327848c55	Désirée	Fazan	2009-11-07	1aW	f	t	2025-04-13 11:29:41.031149+00	95	-15	3	weiblich
-1a3241b4-2c1b-43f6-861e-00239602f81f	Yasmine	Ghazali	2009-12-21	1aW	f	t	2025-04-13 11:29:41.031149+00	82	-15	2.75	weiblich
-7516b442-0e5f-4634-ba72-7886372efeea	Jana	Milovanovic	2009-09-28	1bW	f	t	2025-04-13 11:29:31.552717+00	171	-15	5	weiblich
-749aa39a-dfb2-48b0-b774-8a0eac9fc3cb	Nour	Abushahata	2009-12-12	1bW	f	t	2025-04-13 11:29:31.552717+00	144	-15	4.75	weiblich
-ac9ac1b6-a0f7-4c6a-94e3-e034860341d0	Abigayl	Yehdego	2008-10-22	1bW	f	t	2025-04-13 11:29:31.552717+00	48	16-17	2.75	weiblich
-\.
-
 
 --
 -- Name: results_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -

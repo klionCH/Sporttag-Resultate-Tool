@@ -54,7 +54,6 @@ export async function POST(req) {
         return response;
     } catch (err) {
         // Fehler bei Serverproblemen
-        console.log(err);
         return NextResponse.json({ error: "Serverfehler" }, { status: 500 });
     }
 

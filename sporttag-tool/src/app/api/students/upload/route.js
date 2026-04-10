@@ -11,19 +11,19 @@ export async function POST(req) {
             return new Response(JSON.stringify({ error: "Ungültiges Format: students muss ein Array sein." }), { status: 400 });
         }
 
-        console.log("Incoming students:", JSON.stringify(students));
-        
+        const sanitized = students.map(s => ({
+            name: s.name ?? null,
+            surname: s.surname ?? null,
+            age_category: s.age_category ?? null,
+            class_group: s.class_group ?? null,
+            date_of_birth: s.date_of_birth ?? null,
+            gender: s.gender ?? null,
+            assistant_bool: s.assistant_bool ?? false,
+            present_bool: s.present_bool ?? true,
+        }));
+
         await sql`
-            INSERT INTO students ${sql(students, 'id', 'name', 'surname', 'age_category', 'class_group', 'date_of_birth', 'gender', 'assistant_bool', 'present_bool')}
-            ON CONFLICT (id) DO UPDATE
-            SET name = EXCLUDED.name,
-                surname = EXCLUDED.surname,
-                age_category = EXCLUDED.age_category,
-                class_group = EXCLUDED.class_group,
-                date_of_birth = EXCLUDED.date_of_birth,
-                gender = EXCLUDED.gender,
-                assistant_bool = EXCLUDED.assistant_bool,
-                present_bool = EXCLUDED.present_bool
+            INSERT INTO students ${sql(sanitized, 'name', 'surname', 'age_category', 'class_group', 'date_of_birth', 'gender', 'assistant_bool', 'present_bool')}
         `;
 
         const newClasses = [...new Set(students.map(s => s.class_group))];

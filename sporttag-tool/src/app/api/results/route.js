@@ -29,7 +29,6 @@ function getBestResult(scoresRaw, heightsRaw, resultsRaw, config) {
 
 // Punktwert aus Punktetabelle abrufen
 async function fetchPointData({ gender, sportCode, bestResult, timeMeasure }) {
-    console.log(`[fetchPointData] Suche Punktzahl für ${gender}, ${sportCode}, Ergebnis: ${bestResult}`);
 
     const data = await sql`
         SELECT performance, points
@@ -49,14 +48,12 @@ async function fetchPointData({ gender, sportCode, bestResult, timeMeasure }) {
         timeMeasure ? row.performance >= bestResult : row.performance <= bestResult
     );
 
-    console.log("[fetchPointData] Gefundene Punktdaten:", sorted[0]);
     return sorted.length > 0 ? [sorted[0]] : [];
 }
 
 // Ergebnisse speichern
 export async function POST(req) {
     const user = requireAnyRole(req, ["teacher", "assistant"]);
-    console.log("🔐 Zugriff durch:", user);
 
     const body = await req.json();
     const { students, sport, group, skippedStudents, attemptHeights, results, scores, sportConfig } = body;
@@ -80,7 +77,6 @@ export async function POST(req) {
 
             const isSkipped = !!skippedStudents[student.id];
             const bestResult = getBestResult(scores[student.id], attemptHeights[student.id], results[student.id], sportConfig);
-            console.log(`👟 [${student.id}] Bestleistung:`, bestResult);
 
             // Punkte bestimmen (oder null)
             let pointData = bestResult === 0
@@ -108,7 +104,6 @@ export async function POST(req) {
                 `;
 
                 note = gradeData[0]?.grade ?? 1;
-                console.log(`📝 [${student.id}] Note:`, note);
             }
             // Eintrag vorbereiten
             const update = {
@@ -124,7 +119,6 @@ export async function POST(req) {
                 grade: isSkipped ? null : note
             };
 
-            console.log("💾 Speichere Resultat für", student.id, update);
 
             // Prüfen ob Resultat existiert
             const existingData = await sql`
@@ -148,7 +142,6 @@ export async function POST(req) {
                 `;
             }
 
-            console.log(`✅ [${student.id}] Ergebnis gespeichert`);
         }
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
