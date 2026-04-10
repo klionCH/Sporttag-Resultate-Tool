@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap');
+
+
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@layer utilities {
+  .wrapper-container {
+    background: linear-gradient(45deg, #2587C6 50%, #ffffff 50%);
+    background-size: cover;
+    background-position: center;
+    min-height: 100dvh;
+  
+  }
+  .transparent-container-upload {
+    @apply bg-white/50 backdrop-blur-md shadow-lg rounded-lg p-10 w-[90dvw]
+    flex lg:flex-row flex-col-reverse min-h-[90dvh] box-border;
+  }
+  .transparent-container {
+    @apply bg-white/50 backdrop-blur-md shadow-lg rounded-lg p-10 w-[90dvw]
+    flex flex-col min-h-[90dvh] sm:h-auto   box-border;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out forwards;
+  }
+
+  .button {
+    @apply             flex items-center gap-2
+    px-4 py-2 sm:px-6 sm:py-3
+    bg-white/70 backdrop-blur-md border border-gray-300
+    text-gray-700 hover:bg-white hover:text-black
+    shadow-md hover:shadow-lg
+    rounded-full sm:rounded-xl
+    text-sm sm:text-base
+    transition-all duration-200
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+
+
+  .wrapper-container {
+    @apply flex justify-center items-center text-center;
+  }
+
+
+  .big-title{
+    @apply text-3xl lg:text-5xl font-extralight text-gray-900 mb-12 tracking-wide
+  }
+
+  .mid-title{
+    @apply text-4xl font-light text-gray-900 mb-6
+  }
+  /* Helfer-Button */
+  .helper-button {
+    @apply flex items-center justify-center px-4 py-1 rounded-lg border-2 border-yellow-400
+    text-black text-lg font-medium transition-all shadow-sm w-[100px];
+  }
+
+  /* Aktiv = Gelber Hintergrund */
+  .helper-button.active {
+    @apply bg-yellow-300 border-yellow-500;
+  }
+
+  /* Inaktiv = Transparente Umrandung */
+  .helper-button.inactive {
+    @apply bg-transparent;
+  }
+
+  /* Durchgestrichen, wenn Schüler abwesend */
+  .helper-button.absent {
+    @apply text-gray-500 line-through border-gray-400 bg-gray-200 cursor-not-allowed;
+  }
+
+  /* Abwesenheits-Button */
+  .absent-button {
+    @apply flex items-center justify-center w-8 h-8 rounded-lg border-2 border-red-400 transition-all shadow-sm;
+  }
+
+  /* Aktiv = Roter Hintergrund */
+  .absent-button.active {
+    @apply bg-red-500 border-red-600 text-white;
+  }
+
+  /* Inaktiv = Transparente Umrandung */
+  .absent-button.inactive {
+    @apply bg-transparent;
+  }
+
+  /* Tabellenzeile */
+  .student-row {
+    @apply flex justify-between items-center p-2 border-b border-gray-300;
+  }
+
+  /* Schüler-Name */
+  .student-name {
+    @apply text-black text-lg;
+  }
+
+  /* Wenn Schüler abwesend ist */
+  .student-name.absent {
+    @apply text-gray-500 line-through;
+  }
+
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Raleway', sans-serif;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.6s ease-in-out forwards;
+}
