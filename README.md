@@ -5,7 +5,7 @@
 
 2. Start Container
     ```
-    docker-compose up --build -d
+    docker-compose up -d --build
     ```
     - App on localhost:3000
     - DB on localhost:5432
