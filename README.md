@@ -16,7 +16,7 @@
     ```
     docker exec -it st-docker-app-1 npm run hash-password -- <yourpassword>
     ```
-2. execute sql in pgAdmin:
+2. Change it in the init.sql or execute this sql in pgAdmin:
 
     - For Admin User:
         ```
