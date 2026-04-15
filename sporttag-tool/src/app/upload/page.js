@@ -160,11 +160,15 @@ export default function UploadPage() {
   
     setLoading(true);
   
-    const updatedStudents = students.map((student, index) => ({
-      ...student,
-      assistant_bool: helpers.includes(index),
-      present_bool: !absentees.includes(index),
-    }));
+    const updatedStudents = students.map((student, index) => {
+      const entry = {
+        ...student,
+        assistant_bool: helpers.includes(index),
+        present_bool: !absentees.includes(index),
+      };
+      if (student.id) entry.id = student.id;
+      return entry;
+    });
   
     try {
       const res = await fetch("/api/students/upload", {
