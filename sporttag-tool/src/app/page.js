@@ -46,9 +46,8 @@ export default function Home() {
             Willkommen zum Leichtathletik-Sporttag!
           </h1>
           <p className="text-lg text-gray-700 mb-4">
-            Ein Projekt im Rahmen der IDPA – entwickelt zur einfachen Verwaltung
-            von Ergebnissen und Teilnehmern. Logge dich ein, um Schülerdaten zu
-            verwalten und Leistungen zu erfassen.
+            Ein Projekt im Rahmen der IDPA 2025 – entwickelt zur einfachen Verwaltung
+            von Ergebnissen und Teilnehmern. 
           </p>
           <Link href="/login">
             <button className="group relative inline-flex items-center gap-2 rounded-lg border border-blue-600 px-6 py-2 text-blue-600 transition-all duration-200 hover:bg-blue-600 hover:text-white hover:shadow-md focus:outline-none">
@@ -71,7 +70,6 @@ export default function Home() {
             </button>
           </Link>
           <div className="flex items-center justify-center gap-16 mt-4">
-            {/* RESULTA Logo */}
             <div className="flex justify-end w-[280px]">
               <Image
                 src="/resulta.svg"
@@ -82,7 +80,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Trennlinie (zentriert, dick, #0A74BB) */}
             <div
               className="w-[4px] h-32 rounded-full"
               style={{ backgroundColor: "#0A74BB" }}
@@ -99,6 +96,7 @@ export default function Home() {
               />
             </div>
           </div>
+            <p className="text-lg text-gray-700 mb-4">by Sven, Dominik, Devin</p>
         </div>
       </div>
     </div>
