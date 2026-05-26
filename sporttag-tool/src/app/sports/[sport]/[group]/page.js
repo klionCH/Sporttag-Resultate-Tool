@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Loader2, CheckCircle, ClipboardList } from "lucide-react";
 import BackButton from "@/app/components/BackButton";
 
-// New Modal Component for Unsaved Changes
+
 const UnsavedChangesModal = ({ isOpen, onClose, onSave, isSaving }) => {
     if (!isOpen) return null;
 
@@ -39,12 +39,11 @@ const UnsavedChangesModal = ({ isOpen, onClose, onSave, isSaving }) => {
 };
 
 export default function GroupResults() {
-    // Get URL parameters
     const {sport, group} = useParams();
     const router = useRouter();
-    const groupKeys = group.split(","); // e.g. ["1a-maennlich", "2a-weiblich"]
+    const groupKeys = group.split(",");
 
-    // State management
+
     const [students, setStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -61,19 +60,16 @@ export default function GroupResults() {
     const [openAccordion, setOpenAccordion] = useState(null);
     const storageKey = `sportresults_${sport}_${group}`;
 
-    // Custom modal state
     const [showUnsavedModal, setShowUnsavedModal] = useState(false);
     const [pendingAction, setPendingAction] = useState(null);
     const [hasChanges, setHasChanges] = useState(false);
 
-    // Sport configuration
     const [sportConfig, setSportConfig] = useState({
         attempts: 4,
         unit: '',
         checkFails: false,
     });
 
-    // Fetch students based on group keys
     const fetchStudents = async () => {
         try {
             const response = await fetch(`/api/students?gruppen=${groupKeys.join(",")}`, {credentials: "include",});
@@ -89,7 +85,6 @@ export default function GroupResults() {
 
             setStudents(data);
 
-            // Initialize state objects for all students
             const initialSkipped = {};
             const initialAttemptHeights = {};
             const initialResults = {};
@@ -107,14 +102,11 @@ export default function GroupResults() {
             setResults(initialResults);
             setScores(initialScores);
 
-            // Load any existing results
             fetchExistingResults(data.map(s => s.id));
         } catch (err) {
             console.error("Fehler bei fetchStudents:", err);
         }
     };
-
-    // Fetch sport configuration
     const fetchSportConfig = async () => {
         try {
             const res = await fetch(`/api/sports?sport=${sport}`, {credentials: "include",});
@@ -139,7 +131,6 @@ export default function GroupResults() {
         }
     };
 
-    // Fetch point scale data for both genders
     const fetchScale = async () => {
         const genderList = ["maennlich", "weiblich"];
         const allData = [];
@@ -162,7 +153,6 @@ export default function GroupResults() {
 
     };
 
-    // Fetch existing results for students
     const fetchExistingResults = async (studentIds) => {
         try {
             const res = await fetch("/api/results/results-by-students", {
@@ -179,38 +169,76 @@ export default function GroupResults() {
             if (!data || data.length === 0) return;
 
             const numAttempts = sportConfig.attempts || 3;
-            const loadedAttemptHeights = { ...attemptHeights };
-            const loadedResults = { ...results };
-            const loadedScores = { ...scores };
-            const loadedSkipped = { ...skippedStudents };
 
-            // Process arrays to ensure they have the correct length
-            const processArray = (arr) =>
-                arr?.length < numAttempts
-                    ? [...arr, ...Array(numAttempts - arr.length).fill("")]
-                    : arr?.slice(0, numAttempts) || Array(numAttempts).fill("");
-
-            // Load existing results into state
-            data.forEach(result => {
-                if (result.heights) loadedAttemptHeights[result.student_id] = processArray(result.heights);
-                if (result.attempt_results) loadedResults[result.student_id] = processArray(result.attempt_results);
-                if (result.scores) loadedScores[result.student_id] = processArray(result.scores);
-                if (result.skipped !== undefined) loadedSkipped[result.student_id] = result.skipped;
+            setAttemptHeights(prev => {
+                const next = { ...prev };
+                data.forEach(result => {
+                    if (result.heights) {
+                        next[result.student_id] = normalizeArray(result.heights, numAttempts, null);
+                    }
+                });
+                return next;
             });
 
-            setAttemptHeights(loadedAttemptHeights);
-            setResults(loadedResults);
-            setScores(loadedScores);
-            setSkippedStudents(loadedSkipped);
+            setResults(prev => {
+                const next = { ...prev };
+                data.forEach(result => {
+                    if (result.attempt_results) {
+                        next[result.student_id] = normalizeArray(result.attempt_results, numAttempts, null);
+                    }
+                });
+                return next;
+            });
 
-            // After loading existing data, set hasChanges to false
+            setScores(prev => {
+                const next = { ...prev };
+                data.forEach(result => {
+                    if (result.scores) {
+                        next[result.student_id] = normalizeArray(result.scores, numAttempts, null);
+                    }
+                });
+                return next;
+            });
+
+            setSkippedStudents(prev => {
+                const next = { ...prev };
+                data.forEach(result => {
+                    if (result.skipped !== undefined) next[result.student_id] = result.skipped;
+                });
+                return next;
+            });
+
             setHasChanges(false);
         } catch (err) {
             console.error("Fehler bei fetchExistingResults:", err);
         }
     };
 
-    // Handle saving results with a completion callback
+    const normalizeArray = (arr, length, fillValue) => {
+        let base = arr;
+
+        if (typeof base === "string") {
+            try {
+                base = JSON.parse(base);
+            } catch {
+                base = [];
+            }
+        }
+
+        if (base && typeof base === "object" && !Array.isArray(base)) {
+            const keys = Object.keys(base);
+            if (keys.every(k => !isNaN(Number(k)))) {
+                const max = Math.max(...keys.map(Number), -1);
+                base = Array.from({ length: max + 1 }, (_, i) => base[i] ?? fillValue);
+            }
+        }
+
+        if (!Array.isArray(base)) base = [];
+
+        if (base.length >= length) return base.slice(0, length);
+        return [...base, ...Array(length - base.length).fill(fillValue)];
+    };
+
     const saveResults = useCallback(async (onComplete) => {
         setSaved(false);
         setIsSaving(true);
@@ -239,7 +267,6 @@ export default function GroupResults() {
             setSaved(true);
             setHasChanges(false);
 
-            // If there's a completion callback, run it
             if (typeof onComplete === 'function') {
                 onComplete();
             }
@@ -251,7 +278,6 @@ export default function GroupResults() {
         }
     }, [students, sport, group, skippedStudents, attemptHeights, results, scores, sportConfig]);
 
-    // Handle input changes for heights and scores
     const handleInputChange = (studentId, index, value, type) => {
         const setter = type === "height" ? setAttemptHeights : setScores;
 
@@ -263,7 +289,6 @@ export default function GroupResults() {
         setHasChanges(true);
     };
 
-    // Handle success/fail result changes
     const handleResultChange = (studentId, index, value) => {
         setResults(prev => ({
             ...prev,
@@ -273,7 +298,6 @@ export default function GroupResults() {
         setHasChanges(true);
     };
 
-    // Handle participation checkbox changes
     const handleCheckboxChange = (studentId, checked) => {
         setSkippedStudents(prev => ({
             ...prev,
@@ -283,12 +307,11 @@ export default function GroupResults() {
         setHasChanges(true);
     };
 
-    // Render input fields for attempts (either heights or scores)
     const renderInputFields = (student, type) => {
-        const numAttempts = sportConfig.attempts || 3;
-        const values = type === "height"
-            ? attemptHeights[student.id] || []
-            : scores[student.id] || [];
+    const numAttempts = sportConfig.attempts || 3;
+    const values = type === "height"
+        ? (attemptHeights[student.id] ?? Array(numAttempts).fill(""))
+        : (scores[student.id] ?? Array(numAttempts).fill(""));
 
         return Array.from({ length: numAttempts }, (_, index) => (
             <div key={index} className="flex items-center gap-2">
@@ -319,18 +342,15 @@ export default function GroupResults() {
         ));
     };
 
-    // Load sport configuration on initial render
     useEffect(() => {
         fetchSportConfig();
         fetchScale();
     }, [sport]);
 
-    // Fetch students when sport config is ready
     useEffect(() => {
         if (sportConfig.attempts) fetchStudents();
     }, [sportConfig]);
 
-    // Filter and sort students when search query changes
     useEffect(() => {
         const result = students.filter(student => {
             const present = student.present_bool === true;
@@ -348,28 +368,20 @@ export default function GroupResults() {
         setFilteredStudents(result);
     }, [searchQuery, students]);
 
-    // Custom navigation handler that displays our modal instead of browser alert
     useEffect(() => {
-        // Diese Funktion verhindert die Navigation ohne die Standard-Dialog anzuzeigen
         const handleBeforeUnload = (e) => {
             if (hasChanges && students.length > 0 && !saved) {
-                // Nur für kompatible Browser: Standard-Dialog unterdrücken
                 e.preventDefault();
 
-                // Safari auf iOS wird diese Meldung ignorieren, aber für andere Browser
-                // wird die Standard-Meldung überschrieben
                 e.returnValue = "";
 
-                // Modal anzeigen (wird auf iOS nicht automatisch funktionieren)
                 setShowUnsavedModal(true);
                 setPendingAction('reload');
 
-                // Dies zeigt den Browser-Dialog in kompatiblen Browsern
                 return "";
             }
         };
 
-        // Handler für normale Link-Klicks, die wir abfangen können
         const handleClick = (e) => {
             const anchor = e.target.closest('a');
             if (anchor && anchor.href && hasChanges && students.length > 0 && !saved) {
@@ -379,7 +391,6 @@ export default function GroupResults() {
             }
         };
 
-        // Handler für Next.js Router-Events
         const handleRouteChange = (url) => {
             if (hasChanges && students.length > 0 && !saved) {
                 setShowUnsavedModal(true);
@@ -389,32 +400,26 @@ export default function GroupResults() {
             }
         };
 
-        // iOS Safari spezifischer Handler für die Back-Button-Funktionalität
         const handlePopState = (e) => {
             if (hasChanges && students.length > 0 && !saved) {
-                // Verhindern des Zurückgehens
                 history.pushState(null, document.title, window.location.href);
                 setShowUnsavedModal(true);
-                setPendingAction('back'); // Spezieller Wert für Zurück-Navigation
+                setPendingAction('back');
             }
         };
 
-        // Event Listeners registrieren
         window.addEventListener("beforeunload", handleBeforeUnload);
         document.addEventListener("click", handleClick);
         window.addEventListener("popstate", handlePopState);
 
-        // Bei der ersten Ladung einen History-Eintrag erstellen
         if (hasChanges && students.length > 0) {
             history.pushState(null, document.title, window.location.href);
         }
 
-        // Router-Events nur hinzufügen, wenn sie existieren
         if (router.events) {
             router.events.on("routeChangeStart", handleRouteChange);
         }
 
-        // Cleanup
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
             document.removeEventListener("click", handleClick);
@@ -423,10 +428,9 @@ export default function GroupResults() {
                 router.events.off("routeChangeStart", handleRouteChange);
             }
         };
-    }, [hasChanges, students, saved, router]);    // Handler for when the user confirms saving in the modal
+    }, [hasChanges, students, saved, router]);   
     const handleSaveAndContinue = () => {
         saveResults(() => {
-            // Erst nach dem Speichern die Änderungen zurücksetzen
             setHasChanges(false);
 
             if (pendingAction === 'reload') {
@@ -434,7 +438,6 @@ export default function GroupResults() {
             } else if (pendingAction === 'back') {
                 window.history.back();
             } else if (typeof pendingAction === 'string') {
-                // Check ob es dieselbe Domain ist
                 const isExternal = !pendingAction.startsWith("/") && !pendingAction.includes(window.location.origin);
 
                 if (!isExternal) {
@@ -450,7 +453,6 @@ export default function GroupResults() {
     };
 
 
-    // Handler for when the user cancels the save dialog
     const handleCancelSave = () => {
         setShowUnsavedModal(false);
         setPendingAction(null);

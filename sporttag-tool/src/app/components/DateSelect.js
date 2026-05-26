@@ -149,7 +149,7 @@ useEffect(() => {
         }
     }, []);
 
-    // Klick außerhalb schließt das Modal
+    // Klick ausserhalb schliesst das Modal
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (

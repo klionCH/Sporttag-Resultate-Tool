@@ -238,8 +238,8 @@ export default function ExportPopup({ onClose }) {
                             <label className="block mb-2 font-medium text-sm">Modus wählen:</label>
                             <select value={mode} onChange={e => setMode(e.target.value)}
                                     className="w-full p-2 border rounded">
-                                <option value="preset">📋 Vorlage verwenden</option>
-                                <option value="custom">⚙️ Eigene Filter definieren</option>
+                                <option value="preset">Vorlage verwenden</option>
+                                <option value="custom">Eigene Filter definieren</option>
                             </select>
                         </div>
 
@@ -358,12 +358,12 @@ export default function ExportPopup({ onClose }) {
                             className="w-full py-3 rounded-lg font-semibold bg-green-600 hover:bg-green-700 text-white"
                             disabled={isGenerating}
                         >
-                            {isGenerating ? "Wird exportiert..." : `📥 Exportieren als ${exportType.toUpperCase()}`}
+                            {isGenerating ? "Wird exportiert..." : `Exportieren als ${exportType.toUpperCase()}`}
                         </button>
                     </>
                 )}
 
-                {/* Fenster schließen */}
+                {/* Fenster schliessen */}
                 <div className="mt-6 text-center">
                     <button onClick={handleClose} className="text-sm text-gray-500 hover:underline">
                         Fenster schliessen
