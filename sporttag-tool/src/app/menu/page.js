@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Upload, PieChart } from "lucide-react";
 import BackButton from "@/app/components/BackButton";
-import { useRouter } from "next/navigation"; // ✅ hinzufügen
+import { useRouter } from "next/navigation";
 
 export default function Menu() {
   const [role, setRole] = useState(null);
-  const router = useRouter(); // ✅ hinzufügen
+  const router = useRouter();
 
   useEffect(() => {
     const checkRole = async () => {
@@ -20,7 +20,7 @@ export default function Menu() {
         const data = await res.json();
         if (data.role) setRole(data.role);
 
-        router.refresh(); // ✅ jetzt funktioniert's
+        router.refresh();
       } catch (err) {
         console.warn("Nicht eingeloggt oder Fehler beim Abrufen der Rolle.");
         router.push("/login");
