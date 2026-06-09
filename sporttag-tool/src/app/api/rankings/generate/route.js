@@ -5,34 +5,28 @@ import {requireAnyRole} from "@/app/lib/auth";
 export async function POST(req) {
 
     try {
-        // Authentifizierung (nur Lehrer erlaubt)
         const user = requireAnyRole(req, ["teacher"]);
-        // Request-Daten: Modus, Vorlage, Filter, Exportoptionen
         const { mode, preset, filters, showDetails, showGrades } = await req.json();
 
-        // Basis-URL ermitteln für internen Fetch
         const cookie = req.headers.get("cookie");
         const protocol = "http";
         const host = req.headers.get("host");
         const baseUrl = `${protocol}://${host}`;
 
-        // Rankings von interner API holen
         const rankingsRes = await fetch(`${baseUrl}/api/rankings/with-details`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Cookie": cookie // Auth weiterleiten
+                "Cookie": cookie
             }
         });
         if (!rankingsRes.ok) {
             throw new Error("Fehler beim Laden der Rankings");
         }
 
-        // Rankings und Zusatzdaten extrahieren
         const json = await rankingsRes.json();
         const { rankings, results, sports, students: studentDetails } = json;
 
-        // Hilfsmaps aufbauen für schnellen Zugriff
         const studentMap = {};
         for (const student of studentDetails) {
             studentMap[student.id] = student;
@@ -59,7 +53,6 @@ export async function POST(req) {
         const titles = {};
         let listen = {};
 
-        // 📌 Modus: Preset-Filterung (nach Kategorie oder Klasse)
         if (mode === "preset") {
 
             // Filter keys based on preset
