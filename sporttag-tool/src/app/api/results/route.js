@@ -127,8 +127,8 @@ export async function POST(req) {
         sportConfig,
     } = body;
 
-    if (!students?.length) {
-        return new Response(JSON.stringify({ error: "Keine Schüler übergeben." }), { status: 400 });
+    if (!students?.length || !sport || !sportConfig) {
+        return new Response(JSON.stringify({ error: "Fehlende Parameter." }), { status: 400 });
     }
 
     try {
