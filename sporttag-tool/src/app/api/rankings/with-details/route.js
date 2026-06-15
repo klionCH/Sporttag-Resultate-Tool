@@ -3,7 +3,9 @@ import sql from "../../../lib/db";
 import {requireAnyRole} from "@/app/lib/auth";
 
 export async function getRankingsWithDetails() {
-        // Schülerdaten abrufen
+        const t0 = Date.now();
+        console.log("[rankings/with-details] Start: Lade Daten aus DB");
+
         const students = await sql`
             SELECT id, name, surname, class_group, date_of_birth, gender, age_category, grade, present_bool, total_points, assistant_bool
             FROM students
@@ -12,8 +14,8 @@ export async function getRankingsWithDetails() {
         if (!students) {
             throw new Error("Fehler beim Laden der Schüler");
         }
+        console.log(`[rankings/with-details] Schüler geladen: ${students.length}`);
 
-        // Resultate abrufen (z.B. für Punkte & Detailanzeige)
         const results = await sql`
             SELECT student_id, sport, best_result, skipped, points, grade
             FROM results
@@ -22,8 +24,8 @@ export async function getRankingsWithDetails() {
         if (!results) {
             throw new Error("Fehler beim Laden der Resultate");
         }
+        console.log(`[rankings/with-details] Resultate geladen: ${results.length}`);
 
-        // Sportarten (für Namen & Einheiten im Export)
         const sports = await sql`
             SELECT code, name, mesure_unit_short
             FROM sports
@@ -32,6 +34,7 @@ export async function getRankingsWithDetails() {
         if (!sports) {
             throw new Error("Fehler beim Laden der Sportarten");
         }
+        console.log(`[rankings/with-details] Sportarten geladen: ${sports.length} (${sports.map(s => s.code).join(", ")})`);
 
         // Punkte pro Schüler berechnen (nur wenn skipped = false)
         const punkteMap = new Map();
@@ -39,6 +42,7 @@ export async function getRankingsWithDetails() {
             if (!r.student_id || r.points == null || r.skipped === true) continue;
             punkteMap.set(r.student_id, (punkteMap.get(r.student_id) || 0) + Number(r.points));
         }
+        console.log(`[rankings/with-details] Punkte berechnet für ${punkteMap.size} Schüler, schreibe in DB`);
 
         // Punkte in DB zurückschreiben (optional, falls noch nicht gespeichert)
         for (const [studentId, points] of punkteMap.entries()) {
@@ -48,6 +52,7 @@ export async function getRankingsWithDetails() {
                 WHERE id = ${studentId}
             `;
         }
+        console.log(`[rankings/with-details] Punkte in DB geschrieben`);
 
         // Daten in ein einheitliches Format bringen
         const daten = students.map((s) => ({
@@ -68,14 +73,12 @@ export async function getRankingsWithDetails() {
         const gruppierteRanglisten = {};
 
         for (const eintrag of daten) {
-            // Preset1 → Gruppierung nach Alterskategorie + Geschlecht
             const keyCategory = `category__${eintrag.kategorie}__${eintrag.gender}`;
             if (!gruppierteRanglisten[keyCategory]) {
                 gruppierteRanglisten[keyCategory] = [];
             }
             gruppierteRanglisten[keyCategory].push(eintrag);
 
-            // Preset2 → Gruppierung nach Klasse + Geschlecht
             const keyClass = `class__${eintrag.class_group}__${eintrag.gender}`;
             if (!gruppierteRanglisten[keyClass]) {
                 gruppierteRanglisten[keyClass] = [];
@@ -83,10 +86,13 @@ export async function getRankingsWithDetails() {
             gruppierteRanglisten[keyClass].push(eintrag);
         }
 
-        // Innerhalb jeder Gruppe nach Punkten sortieren (absteigend)
         for (const key in gruppierteRanglisten) {
             gruppierteRanglisten[key].sort((a, b) => b.total_points - a.total_points);
         }
+
+        const groupKeys = Object.keys(gruppierteRanglisten);
+        console.log(`[rankings/with-details] Ranglisten gruppiert: ${groupKeys.length} Gruppen (${groupKeys.join(", ")})`);
+        console.log(`[rankings/with-details] Fertig in ${Date.now() - t0}ms`);
 
         return {
             rankings: gruppierteRanglisten,

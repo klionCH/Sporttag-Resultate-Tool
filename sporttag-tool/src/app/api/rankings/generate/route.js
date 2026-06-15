@@ -9,7 +9,10 @@ export async function POST(req) {
         const user = requireAnyRole(req, ["teacher"]);
         const { mode, preset, filters, showDetails, showGrades } = await req.json();
 
+        console.log(`[rankings/generate] Anfrage von User ${user.username} | mode=${mode} preset=${preset ?? "-"} filters=${JSON.stringify(filters ?? {})}`);
+
         const { rankings, results, sports, students: studentDetails } = await getRankingsWithDetails();
+        console.log(`[rankings/generate] Daten geladen: ${studentDetails.length} Schüler, ${results.length} Resultate, ${sports.length} Sportarten, ${Object.keys(rankings).length} Ranking-Gruppen`);
 
         const studentMap = {};
         for (const student of studentDetails) {
@@ -39,9 +42,10 @@ export async function POST(req) {
 
         if (mode === "preset") {
 
-            // Filter keys based on preset
             const keyPrefix = preset === "preset1" ? "category__" : "class__";
             const relevantKeys = Object.keys(rankings).filter(key => key.startsWith(keyPrefix));
+            console.log(`[rankings/generate] Preset-Modus: ${preset}, ${relevantKeys.length} Gruppen gefunden (${relevantKeys.join(", ")})`);
+
 
             for (const key of relevantKeys) {
                 const parts = key.split("__");
@@ -107,7 +111,7 @@ export async function POST(req) {
         }
         // 🔧 Modus: Benutzerdefinierte Filter (z. B. ExportPopup)
         else {
-            // Alle Schüler aus Rankings sammeln (Duplikate entfernen)
+            console.log(`[rankings/generate] Custom-Modus: Filter gender=${filters?.gender} altersgruppe=${filters?.altersgruppe} class_group=${filters?.class_group}`);
             let allStudents = [];
             for (const list of Object.values(rankings)) {
                 allStudents = [...allStudents, ...list];
@@ -167,6 +171,7 @@ export async function POST(req) {
                 return student;
             });
 
+            console.log(`[rankings/generate] Custom-Modus: ${filteredStudents.length} Schueler nach Filterung`);
             listen = {
                 "Benutzerdefiniert": filteredStudents
             };
@@ -194,7 +199,10 @@ export async function POST(req) {
 
         const sportHeaders = Array.from(allSports);
 
-        // 📤 JSON-Antwort für Export
+        const listKeys = Object.keys(listen);
+        const totalStudents = listKeys.reduce((sum, k) => sum + listen[k].length, 0);
+        console.log(`[rankings/generate] Fertig: ${listKeys.length} Listen, ${totalStudents} Eintraege, ${sportHeaders.length} Sportarten`);
+
         return Response.json({
             ranglisten: listen,
             titles,
@@ -203,7 +211,8 @@ export async function POST(req) {
             sportNameMap
         });
     } catch (error) {
-        console.error("API Error:", error);
+        console.error("[rankings/generate] Fehler:", error?.message ?? error);
+        console.error("[rankings/generate] Stack:", error?.stack ?? "(kein Stack)");
         return Response.json({ error: error.message || "Interner Serverfehler" }, { status: 500 });
     }
 }
