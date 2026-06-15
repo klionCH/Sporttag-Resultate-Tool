@@ -2,10 +2,7 @@ export const dynamic = 'force-dynamic';
 import sql from "../../../lib/db";
 import {requireAnyRole} from "@/app/lib/auth";
 
-export async function GET(req) {
-    const user = requireAnyRole(req, ["teacher"]);
-
-    try {
+export async function getRankingsWithDetails() {
         // Schülerdaten abrufen
         const students = await sql`
             SELECT id, name, surname, class_group, date_of_birth, gender, age_category, grade, present_bool, total_points, assistant_bool
@@ -91,14 +88,19 @@ export async function GET(req) {
             gruppierteRanglisten[key].sort((a, b) => b.total_points - a.total_points);
         }
 
-        // Response: Rankings + alle benötigten Zusatzdaten
-        return new Response(JSON.stringify({
+        return {
             rankings: gruppierteRanglisten,
             results,
             sports,
             students: daten
-        }), { status: 200 });
+        };
+}
 
+export async function GET(req) {
+    const user = requireAnyRole(req, ["teacher"]);
+    try {
+        const data = await getRankingsWithDetails();
+        return new Response(JSON.stringify(data), { status: 200 });
     } catch (error) {
         console.error("Fehler in /api/rankings/with-details:", error);
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });

@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import {requireAnyRole} from "@/app/lib/auth";
+import {getRankingsWithDetails} from "@/app/api/rankings/with-details/route";
 
 // POST-Handler zur Generierung von Ranglisten für Export (CSV, PDF, Excel)
 export async function POST(req) {
@@ -8,24 +9,7 @@ export async function POST(req) {
         const user = requireAnyRole(req, ["teacher"]);
         const { mode, preset, filters, showDetails, showGrades } = await req.json();
 
-        const cookie = req.headers.get("cookie");
-        const protocol = "http";
-        const host = req.headers.get("host");
-        const baseUrl = `${protocol}://${host}`;
-
-        const rankingsRes = await fetch(`${baseUrl}/api/rankings/with-details`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Cookie": cookie
-            }
-        });
-        if (!rankingsRes.ok) {
-            throw new Error("Fehler beim Laden der Rankings");
-        }
-
-        const json = await rankingsRes.json();
-        const { rankings, results, sports, students: studentDetails } = json;
+        const { rankings, results, sports, students: studentDetails } = await getRankingsWithDetails();
 
         const studentMap = {};
         for (const student of studentDetails) {
