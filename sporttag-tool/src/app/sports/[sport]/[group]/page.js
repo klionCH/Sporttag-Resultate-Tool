@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2, CheckCircle, ClipboardList } from "lucide-react";
 import BackButton from "@/app/components/BackButton";
 
 
-const UnsavedChangesModal = ({ isOpen, onClose, onSave, isSaving }) => {
+const UnsavedChangesModal = ({ isOpen, onClose, onSave, isSaving, saveError }) => {
     if (!isOpen) return null;
 
     return (
@@ -18,6 +18,9 @@ const UnsavedChangesModal = ({ isOpen, onClose, onSave, isSaving }) => {
                 <p className="text-gray-700 mb-6">
                     Es gibt ungespeicherte Änderungen auf dieser Seite. Möchten Sie speichern, bevor Sie fortfahren?
                 </p>
+                {saveError && (
+                    <p className="text-red-600 text-sm mb-4">{saveError}</p>
+                )}
                 <div className="flex justify-end gap-4">
                     <button
                         onClick={onClose}
@@ -63,6 +66,10 @@ export default function GroupResults() {
     const [showUnsavedModal, setShowUnsavedModal] = useState(false);
     const [pendingAction, setPendingAction] = useState(null);
     const [hasChanges, setHasChanges] = useState(false);
+    const [saveError, setSaveError] = useState("");
+
+    const savedTimeoutRef = useRef(null);
+    const didPushStateRef = useRef(false);
 
     const [sportConfig, setSportConfig] = useState({
         attempts: 4,
@@ -241,7 +248,9 @@ export default function GroupResults() {
 
     const saveResults = useCallback(async (onComplete) => {
         setSaved(false);
+        setSaveError("");
         setIsSaving(true);
+        if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
 
         try {
             const response = await fetch("/api/results", {
@@ -266,15 +275,16 @@ export default function GroupResults() {
 
             setSaved(true);
             setHasChanges(false);
+            setIsSaving(false);
+            savedTimeoutRef.current = setTimeout(() => setSaved(false), 2500);
 
             if (typeof onComplete === 'function') {
                 onComplete();
             }
         } catch (error) {
             console.error("Speicherfehler:", error);
-        } finally {
+            setSaveError(error.message || "Fehler beim Speichern");
             setIsSaving(false);
-            setTimeout(() => setSaved(false), 2500);
         }
     }, [students, sport, group, skippedStudents, attemptHeights, results, scores, sportConfig]);
 
@@ -368,16 +378,27 @@ export default function GroupResults() {
         setFilteredStudents(result);
     }, [searchQuery, students]);
 
+    // Push a single history entry when unsaved changes first appear so the
+    // popstate handler can intercept the back button. Only push once — not on
+    // every re-render — to avoid stacking duplicate history entries.
+    useEffect(() => {
+        if (hasChanges && students.length > 0) {
+            if (!didPushStateRef.current) {
+                history.pushState(null, document.title, window.location.href);
+                didPushStateRef.current = true;
+            }
+        } else {
+            didPushStateRef.current = false;
+        }
+    }, [hasChanges, students.length]);
+
     useEffect(() => {
         const handleBeforeUnload = (e) => {
             if (hasChanges && students.length > 0 && !saved) {
                 e.preventDefault();
-
                 e.returnValue = "";
-
                 setShowUnsavedModal(true);
                 setPendingAction('reload');
-
                 return "";
             }
         };
@@ -391,16 +412,7 @@ export default function GroupResults() {
             }
         };
 
-        const handleRouteChange = (url) => {
-            if (hasChanges && students.length > 0 && !saved) {
-                setShowUnsavedModal(true);
-                setPendingAction(url);
-                router.events?.emit('routeChangeError');
-                throw 'Navigation wegen ungespeicherten Änderungen abgebrochen.';
-            }
-        };
-
-        const handlePopState = (e) => {
+        const handlePopState = () => {
             if (hasChanges && students.length > 0 && !saved) {
                 history.pushState(null, document.title, window.location.href);
                 setShowUnsavedModal(true);
@@ -412,26 +424,17 @@ export default function GroupResults() {
         document.addEventListener("click", handleClick);
         window.addEventListener("popstate", handlePopState);
 
-        if (hasChanges && students.length > 0) {
-            history.pushState(null, document.title, window.location.href);
-        }
-
-        if (router.events) {
-            router.events.on("routeChangeStart", handleRouteChange);
-        }
-
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
             document.removeEventListener("click", handleClick);
             window.removeEventListener("popstate", handlePopState);
-            if (router.events) {
-                router.events.off("routeChangeStart", handleRouteChange);
-            }
         };
-    }, [hasChanges, students, saved, router]);   
+    }, [hasChanges, students, saved]);
+
     const handleSaveAndContinue = () => {
         saveResults(() => {
-            setHasChanges(false);
+            setShowUnsavedModal(false);
+            setPendingAction(null);
 
             if (pendingAction === 'reload') {
                 window.location.reload();
@@ -439,16 +442,12 @@ export default function GroupResults() {
                 window.history.back();
             } else if (typeof pendingAction === 'string') {
                 const isExternal = !pendingAction.startsWith("/") && !pendingAction.includes(window.location.origin);
-
                 if (!isExternal) {
                     router.push(pendingAction);
                 } else {
                     window.location.href = pendingAction;
                 }
             }
-
-            setPendingAction(null);
-            setShowUnsavedModal(false);
         });
     };
 
@@ -557,6 +556,9 @@ export default function GroupResults() {
                                 'Ergebnisse speichern'
                             )}
                         </button>
+                        {saveError && !isSaving && (
+                            <p className="mt-2 text-sm text-red-600">{saveError}</p>
+                        )}
                     </div>
                 )}
             </div>
@@ -710,6 +712,7 @@ export default function GroupResults() {
                 onClose={handleCancelSave}
                 onSave={handleSaveAndContinue}
                 isSaving={isSaving}
+                saveError={saveError}
             />
 
 
